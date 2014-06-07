@@ -8,3 +8,11 @@ Garrilla, I was able to get your code working and then added one small feature I
 
 Toulon
 
+Never mind. I got it working.
+
+ value = document.getElementById("updateUserGender").value;
+      console.log("Value =" + value);
+      updatedFields['gender'] = value;
+      
+If you have a better solution I would like to here your thoughts.
+
