@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Demo</title>
+    <script type="text/javascript">
+        var selectFunction = function() {
+            document.getElementById("select").value = "defaultValue";
+        };
+    </script>
+</head>
+<body>
+<select id="select">
+    <option value="defaultValue">Default</option>
+    <option value="Option1">Option1</option>
+    <option value="Option2">Option2</option>
+</select>
+<input type="button" value="CHANGE" onclick="selectFunction()" />
+</body>
+</html>

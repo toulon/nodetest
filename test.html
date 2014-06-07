@@ -1,0 +1,132 @@
+<html><head><title>Live Updates from Text Input in JavaScript</title>
+    <script src="comment.js"></script><script>onload=commentsOnload</script>
+    <link rel="stylesheet" href="blog.css">
+    <link rel="feed alternate" type="application/atom+xml" href="feed.atom">
+
+    <style>[touch-action="none"]{ -ms-touch-action: none; touch-action: none; }[touch-action="pan-x"]{ -ms-touch-action: pan-x; touch-action: pan-x; }[touch-action="pan-y"]{ -ms-touch-action: pan-y; touch-action: pan-y; }[touch-action="scroll"],[touch-action="pan-x pan-y"],[touch-action="pan-y pan-x"]{ -ms-touch-action: pan-x pan-y; touch-action: pan-x pan-y; }</style><style id="clearly_highlighting_css" type="text/css">/* selection */ html.clearly_highlighting_enabled ::-moz-selection { background: rgba(246, 238, 150, 0.99); } html.clearly_highlighting_enabled ::selection { background: rgba(246, 238, 150, 0.99); } /* cursor */ html.clearly_highlighting_enabled {    /* cursor and hot-spot position -- requires a default cursor, after the URL one */    cursor: url("chrome-extension://pioclpoplcdbaefihamjohnefbikjilc/clearly/images/highlight--cursor.png") 14 16, text; } /* highlight tag */ em.clearly_highlight_element {    font-style: inherit !important; font-weight: inherit !important;    background-image: url("chrome-extension://pioclpoplcdbaefihamjohnefbikjilc/clearly/images/highlight--yellow.png");    background-repeat: repeat-x; background-position: top left; background-size: 100% 100%; } /* the delete-buttons are positioned relative to this */ em.clearly_highlight_element.clearly_highlight_first { position: relative; } /* delete buttons */ em.clearly_highlight_element a.clearly_highlight_delete_element {    display: none; cursor: pointer;    padding: 0; margin: 0; line-height: 0;    position: absolute; width: 34px; height: 34px; left: -17px; top: -17px;    background-image: url("chrome-extension://pioclpoplcdbaefihamjohnefbikjilc/clearly/images/highlight--delete-sprite.png"); background-repeat: no-repeat; background-position: 0px 0px; } em.clearly_highlight_element a.clearly_highlight_delete_element:hover { background-position: -34px 0px; } /* retina */ @media (min--moz-device-pixel-ratio: 2), (-webkit-min-device-pixel-ratio: 2), (min-device-pixel-ratio: 2) {    em.clearly_highlight_element { background-image: url("chrome-extension://pioclpoplcdbaefihamjohnefbikjilc/clearly/images/highlight--yellow@2x.png"); }    em.clearly_highlight_element a.clearly_highlight_delete_element { background-image: url("chrome-extension://pioclpoplcdbaefihamjohnefbikjilc/clearly/images/highlight--delete-sprite@2x.png"); background-size: 68px 34px; } } </style></head><body><div id="_GPL_e6a00_parent_div" style="position: absolute; top: 0px; left: 0px; width: 1px; height: 1px; z-index: 2147483647;"><object type="application/x-shockwave-flash" id="_GPL_e6a00_swf" data="http://cdncache-a.akamaihd.net/items/e6a00/storage.swf?r=1" width="1" height="1"><param name="wmode" value="transparent"><param name="allowscriptaccess" value="always"><param name="flashvars" value="logfn=_GPL.items.e6a00.log&amp;onload=_GPL.items.e6a00.onload&amp;onerror=_GPL.items.e6a00.onerror&amp;LSOName=gpl"></object></div><header id="siteHeader">
+    <h1><a href="/~inimino/blog/">~inimino/blog</a></h1>
+</header>
+<section id="post">
+
+    <h1>Live Updates from Text Input in JavaScript</h1>
+
+    <p><time datetime="20090226">February 26, 2009</time></p>
+
+
+    <!-- This should be in the head, but a limitation in the blog engine, which I don't care enough to fix today, prevents it. -->
+    <style>
+        input {border:1px solid black;padding:0.2em}
+    </style>
+
+
+    <p>It is quite common to update a Web page immediately and continuously in response to user input in a text box (i.e. an &lt;input type=text&gt; or a &lt;textarea&gt;).
+        Common motivations would be to provide auto-completion or suggestion features, to validate the content of an HTML form, or to implement a live preview feature like the one used for comments on this very blog.
+    </p>
+
+    <p>This is quite simple to do, but as it seems to be somewhat of a frequently asked question I decided to publish an answer.
+    </p>
+
+
+    <h2>Demo</h2>
+
+    <p>Type in the text box to try it:
+    </p>
+
+    <fieldset>
+        <input type="text">
+    </fieldset>
+
+
+    <p id="charCount">You entered 4 characters.</p>
+    <p id="original">Joey</p>
+    <p id="reversed">yeoJ</p>
+
+
+
+    <h2>Code</h2>
+
+    <script class="visible">
+        /* A convenience function to reverse a string, and
+         * one to set the content of an element.
+         */
+
+        function reverse(s){return s.split('').reverse().join('')}
+
+        function set(el,text){
+            while(el.firstChild)el.removeChild(el.firstChild);
+            el.appendChild(document.createTextNode(text))}
+
+        /* setupUpdater will be called once, on page load.
+         */
+
+        function setupUpdater(){
+            var input=document.getElementsByTagName('input')[0]
+                    , reversed=document.getElementById('reversed')
+                    , count=document.getElementById('charCount')
+                    , orig=document.getElementById('original')
+                    , oldText=input.value
+                    , timeout=null;
+
+            /* handleChange is called 50ms after the user stops
+             typing. */
+            function handleChange(){
+                var newText=input.value;
+                if (newText==oldText) return; else oldText=newText;
+                set(reversed, reverse(newText));
+                set(count, 'You entered '+newText.length+' characters.');
+                set(orig, newText);
+            }
+
+            /* eventHandler is called on keyboard and mouse events.
+             If there is a pending timeout, it cancels it.
+             It sets a timeout to call handleChange in 50ms. */
+            function eventHandler(){
+                if(timeout) clearTimeout(timeout);
+                timeout=setTimeout(handleChange, 50);
+            }
+
+            input.onkeydown=input.onkeyup=input.onclick=eventHandler;
+        }
+
+        setupUpdater();
+        document.getElementsByTagName('input')[0].focus();
+    </script>
+
+
+
+    <h2>Explanation</h2>
+
+    <p>On keyboard or mouse events that might change the contents of the text box, we set a timeout.
+        We don't want to have several timeouts running at the same time, so if there is one already running we cancel it.
+        We set a timeout rather than just reading the value directly, since this would be inefficient, and doesn't work for events which fire before the value property in the DOM is updated.
+    </p>
+
+    <p>When the timeout fires, we get the current value of the text box, do whatever we need to with it, and update the page.</p>
+</section>
+
+<ol id="replies">
+    <li id="c_Jdan_1235671981">
+        <heading><time datetime="2009-02-26T11:13:01-0700">2009-02-26</time> Jdan
+        </heading>
+        <section class="body">
+            <p>Fun :)</p><input type="button" value="reply" class="replyButton"></section>
+    </li><li id="c_Sam_1236302969">
+    <heading><time datetime="2009-03-05T18:29:29-0700">2009-03-05</time> Sam
+    </heading>
+    <section class="body">
+        <p>Works great. Operational limit: 524,287 characters ... any idea why it dies at 2^19? I guess it's probably 'count's data type.
+
+        </p><p>Pretty Cool stuff! I especially like the comments :)</p><input type="button" value="reply" class="replyButton"></section>
+    <ol>
+        <li id="c_inimino_1236309608">
+            <heading><time datetime="2009-03-05T20:20:08-0700">2009-03-05</time> inimino
+            </heading>
+            <section class="body">
+                <p>Sam, I think the length limit is imposed by the browser as a limit on the length of a single &lt;input type=text&gt;.  Had I used a &lt;textarea&gt; instead, this limit would probably be higher, and I'm sure this varies between browsers.
+
+                </p><p>In a recent Firefox build I got up to "You entered 2097152 characters." before stopping testing.  (Hold down Ctrl and hit A C V V to double the length of the text.)</p>
+
+                <input type="button" value="reply" class="replyButton"></section>
+        </li></ol>
+</li><input type="button" value="post a comment" class="replyButton" id="replyButton"></ol>
+</body></html>

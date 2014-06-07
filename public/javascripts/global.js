@@ -41,6 +41,14 @@ function populateTable() {
   });
 };
 
+var Fb = {}; //An empty object literal for holding the function
+Fb.log = function(obj, consoleMethod) {
+  if (typeof consoleMethod === "string" && typeof console[consoleMethod] === "function") {
+    console[consoleMethod](obj);
+  } else {
+    console.log(obj);
+  }
+}
 // Show User Info
 function showUserInfo(event) {
 
@@ -192,23 +200,21 @@ function updateUser(event) {
     console.log("ID = " + _id);
     //create a collection of the updated fields
     var fieldsToBeUpdated = $('#updateUser input.updated');
-//    console.log("fieldsToBeUpdated = " + JSON.stringify(fieldsToBeUpdated))
+//    alert("fieldsToBeUpdated = " + JSON.stringify(fieldsToBeUpdated))
+    Fb.log("fieldsToBeUpdated " + fieldsToBeUpdated, "object");
+
     //create an object of the pairs
     var updatedFields = {};
     $(fieldsToBeUpdated).each(function () {
       var key = $(this).attr('placeholder').replace(" ", "").toLowerCase();
+      console.log("Attribute " + $(this).attr('placeholder'))
       var value = $(this).val();
       console.log("Value =" + value);
       updatedFields[key] = value;
-    })
-
-    fieldsToBeUpdated = $('#updateUser select.updated');
-    $(fieldsToBeUpdated).each(function () {
-      var key = $(this).attr('placeholder').replace(" ", "").toLowerCase();
-      var value = $(this).val();
+    });
+      value = document.getElementById("updateUserGender").value;
       console.log("Value =" + value);
-      updatedFields[key] = value;
-    })
+      updatedFields['gender'] = value;
 
     console.log("updatedFields = " + JSON.stringify(updatedFields))
     alert(JSON.stringify(updatedFields));
